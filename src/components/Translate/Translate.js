@@ -21,29 +21,52 @@ const Translate = () => {
   const [searchResult, setSearchResult] = useState('')
   const [inputSearch, setInputSearch] = useState('')
   const [isSearch, setIsSearch] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
   // const [gifLimit, setGifLimit] = useState(20)     // to be used for infinite scroll
   // const [gifOffset, setGifOffset] = useState(0)    // to be used for infinite scroll
 
   const translate = () => {
     const url = `https://api.giphy.com/v1/gifs/translate?api_key=${GIPHY_API_KEY}&s=${input}&weirdness=${weirdness}`
     setIsSearch(false)
+    setIsLoading(true)
     fetch(url)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          setIsError(true)
+          setIsLoading(false)
+        }
+        return response.json()
+      })
       .then((data) => {
         setResult(data.data.images.original.url)
         setMessage('')
         setInput('')
         setWeirdness('')
         setInputSearch('')
+        setIsLoading(false)
       })
-      .catch(() => setMessage('Sorry, something went wrong! Please try again.'))
+      .catch(() => {
+        setIsLoading(false)
+        setMessage('Sorry, something went wrong! Please try again.')
+      })
+    if (isLoading) {
+      return <Typography>Loading...</Typography>
+    }
   }
 
   const search = () => {
     const url = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${inputSearch}&limit=20&offset=0&rating=g&lang=en`
     setIsSearch(true)
+    setIsLoading(true)
     fetch(url)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          setIsError(true)
+          setIsLoading(false)
+        }
+        return response.json()
+      })
       .then((data) => {
         const gifs = data.data.map((gif) => gif.images.original.url)
         setSearchResult(gifs)
@@ -51,8 +74,12 @@ const Translate = () => {
         setInput('')
         setWeirdness('')
         setInputSearch('')
+        setIsLoading(false)
       })
-      .catch(() => setMessage('Sorry, something went wrong! Please try again.'))
+      .catch(() => {
+        setIsLoading(false)
+        setMessage('Sorry, something went wrong! Please try again.')
+      })
   }
 
   const handleChange = (e) => {
@@ -91,16 +118,7 @@ const Translate = () => {
           value={input}
           onChange={handleChange}
         />
-        <Button
-          variant='contained'
-          color='secondary'
-          size='large'
-          sx={{ height: '40px', ml: '10px' }}
-          onClick={translate}
-        >
-          Translate
-        </Button>
-        <Box display='inline' ml='100px'>
+        <Box display='inline' ml='10px'>
           <FormControl size='small' sx={{ minWidth: 120 }}>
             <InputLabel color='secondary'>Weirdness</InputLabel>
             <Select
@@ -117,6 +135,15 @@ const Translate = () => {
             </Select>
           </FormControl>
         </Box>
+        <Button
+          variant='contained'
+          color='secondary'
+          size='large'
+          sx={{ height: '40px', ml: '10px' }}
+          onClick={translate}
+        >
+          Translate
+        </Button>
 
         <br />
         <Box mt='30px'>
@@ -137,6 +164,13 @@ const Translate = () => {
           </Button>
         </Box>
         <br />
+
+        {isLoading && <Typography>Loading...</Typography>}
+        {isError && (
+          <Typography>
+            Sorry, something went wrong! Please try again.
+          </Typography>
+        )}
 
         {message ? (
           <Typography mt='20px'>{message}</Typography>
