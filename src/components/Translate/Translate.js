@@ -21,8 +21,8 @@ const Translate = () => {
   const [searchResult, setSearchResult] = useState('')
   const [inputSearch, setInputSearch] = useState('')
   const [isSearch, setIsSearch] = useState(false)
-  // const [gifLimit, setGifLimit] = useState(20)     // to be used for infinte scroll
-  // const [gifOffset, setGifOffset] = useState(0)    // to be used for infinte scroll
+  // const [gifLimit, setGifLimit] = useState(20)     // to be used for infinite scroll
+  // const [gifOffset, setGifOffset] = useState(0)    // to be used for infinite scroll
 
   const translate = () => {
     const url = `https://api.giphy.com/v1/gifs/translate?api_key=${GIPHY_API_KEY}&s=${input}&weirdness=${weirdness}`
@@ -32,9 +32,11 @@ const Translate = () => {
       .then((data) => {
         setResult(data.data.images.original.url)
         setMessage('')
+        setInput('')
+        setWeirdness('')
+        setInputSearch('')
       })
       .catch(() => setMessage('Sorry, something went wrong! Please try again.'))
-    // clearInputs()
   }
 
   const search = () => {
@@ -46,17 +48,12 @@ const Translate = () => {
         const gifs = data.data.map((gif) => gif.images.original.url)
         setSearchResult(gifs)
         setMessage('')
+        setInput('')
+        setWeirdness('')
+        setInputSearch('')
       })
       .catch(() => setMessage('Sorry, something went wrong! Please try again.'))
-    // clearInputs()
   }
-
-  // ------------Unable to clear inputs------------
-  // const clearInputs = () => {
-  //   setInput('')
-  //   setInputSearch('')
-  //   setWeirdness('')
-  // }
 
   const handleChange = (e) => {
     setInput(e.target.value)
@@ -68,10 +65,9 @@ const Translate = () => {
 
   const handleWeirdness = (e) => {
     setWeirdness(e.target.value)
-    translate()
   }
 
-  //-------Infinte scroll incomplete: below code I put together after searching online------
+  //-------Infinite scroll incomplete: below code I put together after searching online------
   // const handleScroll = (e) => {
   //   const { scrollTop, clientHeight, scrollHeight } = e.target
   //   if (scrollTop + clientHeight >= scrollHeight - 100) {
@@ -84,32 +80,33 @@ const Translate = () => {
   return (
     <>
       <Container sx={{ textAlign: 'center' }}>
-        <Typography variant="h3" color="secondary" mt="20px" gutterBottom>
+        <Typography variant='h3' color='secondary' mt='20px' gutterBottom>
           Welcome to GIPHY Translate
         </Typography>
         <TextField
-          variant="outlined"
-          label="Enter your phrase"
-          size="small"
-          color="secondary"
+          variant='outlined'
+          label='Enter your phrase'
+          size='small'
+          color='secondary'
+          value={input}
           onChange={handleChange}
         />
         <Button
-          variant="contained"
-          color="secondary"
-          size="large"
+          variant='contained'
+          color='secondary'
+          size='large'
           sx={{ height: '40px', ml: '10px' }}
           onClick={translate}
         >
           Translate
         </Button>
-        <Box display="inline" ml="100px">
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel color="secondary">Weirdness</InputLabel>
+        <Box display='inline' ml='100px'>
+          <FormControl size='small' sx={{ minWidth: 120 }}>
+            <InputLabel color='secondary'>Weirdness</InputLabel>
             <Select
-              label="Weirdness"
+              label='Weirdness'
               value={weirdness}
-              color="secondary"
+              color='secondary'
               onChange={handleWeirdness}
             >
               {weirdnessValues.map((value) => (
@@ -122,16 +119,17 @@ const Translate = () => {
         </Box>
 
         <br />
-        <Box mt="30px">
+        <Box mt='30px'>
           <TextField
-            label="Search here"
-            size="small"
+            label='Search here'
+            size='small'
+            value={inputSearch}
             onChange={handleSearch}
           ></TextField>
           <Button
-            variant="contained"
-            color="secondary"
-            size="large"
+            variant='contained'
+            color='secondary'
+            size='large'
             sx={{ height: '40px', ml: '10px' }}
             onClick={search}
           >
@@ -141,7 +139,7 @@ const Translate = () => {
         <br />
 
         {message ? (
-          <Typography mt="20px">{message}</Typography>
+          <Typography mt='20px'>{message}</Typography>
         ) : isSearch ? (
           searchResult && (
             <List
@@ -149,26 +147,26 @@ const Translate = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                // overflow: 'scroll',      // to be used for infinte scroll
-                // maxHeight: '400px',      // to be used for infinte scroll
+                // overflow: 'scroll',      // to be used for infinite scroll
+                // maxHeight: '400px',      // to be used for infinite scroll
               }}
-              // onScroll={handleScroll}    // to be used for infinte scroll
+              // onScroll={handleScroll}    // to be used for infinite scroll
             >
               {searchResult.map((gif, index) => (
                 <Box
                   key={index}
-                  component="img"
+                  component='img'
                   src={gif}
                   alt={`${gif} GIF`}
-                  display="block"
-                  mt="20px"
+                  display='block'
+                  mt='20px'
                 />
               ))}
             </List>
           )
         ) : (
           result && (
-            <Box component="img" src={result} alt={`${result} GIF`} mt="20px" />
+            <Box component='img' src={result} alt={`${result} GIF`} mt='20px' />
           )
         )}
       </Container>
