@@ -48,11 +48,9 @@ const Translate = () => {
       })
       .catch(() => {
         setIsLoading(false)
+        setIsError(false)
         setMessage('Sorry, something went wrong! Please try again.')
       })
-    if (isLoading) {
-      return <Typography>Loading...</Typography>
-    }
   }
 
   const search = () => {
@@ -78,6 +76,7 @@ const Translate = () => {
       })
       .catch(() => {
         setIsLoading(false)
+        setIsError(false)
         setMessage('Sorry, something went wrong! Please try again.')
       })
   }
